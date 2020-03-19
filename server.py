@@ -27,9 +27,17 @@ while True:
 
         conn.send(bevs_string)
 
+
     elif message.startswith("order_") and message[6:].isdigit():
-        conn.send(f"{message[6:]} is ordered".encode())
+        number = int(message[6:])
+        coffee_machine.prepare_beverage(number)
+        conn.send(f"{number} is ordered".encode())
         
+
+    elif message == "get_stats":
+        stats = coffee_machine.get_history()
+        conn.send(stats.encode())
+  
     elif message == "exit":
         break
 

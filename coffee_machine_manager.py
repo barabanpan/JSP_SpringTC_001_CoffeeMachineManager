@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
+from tkinter import messagebox
 
-from coffee_machine_client import get_dict_of_available_beverages, order_n, stop_server
+from coffee_machine_client import get_dict_of_available_beverages, order_n, get_stats, stop_server
 
 class Window:
     def __init__(self, main):
@@ -64,7 +65,8 @@ class Window:
             self.bev_buttons.append(b)
         
     def stats(self):
-        pass
+        statistics = get_stats()
+        tk.messagebox.showinfo("Statistics", statistics)
     
     
 if __name__ == "__main__":

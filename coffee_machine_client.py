@@ -26,6 +26,19 @@ def order_n(number):
     sock.close()
     return result.decode()
 
+def get_stats():
+    """Returns coffee machine's statistics."""
+
+    sock = socket.socket()
+    sock.connect(('localhost', 9097))
+    sock.send("get_stats".encode())  
+    
+    stats = sock.recv(16384)    # while True?
+
+    sock.close()
+    return stats.decode()
+
+
 def stop_server(): 
     #?
     """Stops running server on coffee machine."""

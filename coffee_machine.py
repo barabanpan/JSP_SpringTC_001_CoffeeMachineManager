@@ -10,8 +10,11 @@ class Beverage(object):
     
     def __repr__(self):
         return f"{self.name.lower().center(20, ' ')}"
-    
-    
+
+
+HISTORYPATH = "history.txt"
+
+
 class CoffeeMachine(object):
     """Class represents coffee machine with attributes:
        beverages - dict of beverages a machine can make,
@@ -44,7 +47,14 @@ class CoffeeMachine(object):
         self.coffee += coffee
                                    
     def prepare_beverage(self, number):
-        if not 0 <= number < len(self.beverages):
+        """If a machine doesn't have enough coffee and milk 
+           to prepare ordered beverage, an Exception is raised.
+           
+           Otherwise, coffee and milk, needed to make a beverage, 
+           are subtracted from coffee and milk that machine has.
+        """
+
+        if not number in self.beverages:
             raise Exception(f"No beverage with such number! ({number})")
         
         if self.coffee < self.beverages[number].coffee:
@@ -56,10 +66,28 @@ class CoffeeMachine(object):
         self.coffee -= self.beverages[number].coffee
         self.milk   -= self.beverages[number].milk
         
-        # write to log
-        return beverages[number]
+        self._write_to_history(number)     # log this order
+  
+        return self.beverages[number]
     
-    def show_history(self):
-        # show history
-        # What sick crazy bastard would like to see a history of a coffee machine?
-        pass
+    def _write_to_history(self, number):
+        
+        from datetime import datetime
+        
+        now = datetime.now().strftime("%H:%M %d.%m.%Y")
+        bev = self.beverages[number]
+
+        with open(HISTORYPATH, 'a') as log:
+            log.write(f"{str(bev)} ordered at {now}\n")
+
+    def get_history(self):
+        """Returns a string with history log."""
+        
+        with open(HISTORYPATH, 'r') as log:
+            history = log.readlines() # list of lines
+        
+        history_str  = f"Coffee left: {self.coffee}, milk left: {self.milk}\n\n"
+        history_str += "Last 30 orders:\n"
+        history_str += "".join(history[-30:][::-1])
+        
+        return history_str
