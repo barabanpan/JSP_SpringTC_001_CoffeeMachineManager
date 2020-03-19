@@ -30,9 +30,14 @@ class Window:
         self.state_label = tk.Label(master=self.main, text="", font=("Helvetica",14))
         self.state_label.place(x=80, y=70)
 
-    def order(self, i):
+    def order(self, i, event):
         """Sends order number i to server."""
-        
+
+        button = event.widget
+        if button["state"] == "disabled":  return
+
+        button["bg"] = "#ff7518"         # mark pressed button
+
         order_n(i)
         for b in self.bev_buttons:
             b["state"] = "disabled"
@@ -57,7 +62,9 @@ class Window:
         count = 0
         for i, bev in bevs.items():
             b = tk.Button(master=self.main, text=str(bev), fg="white", bg="#b5651d",
-                          font=("Helvetica",10), command=lambda bev_i=i: self.order(bev_i))
+                          font=("Helvetica",10))
+            b.bind("<Button-1>", lambda event, bev_i=i: self.order(bev_i, event)) 
+
             b.place(width=b_width, height=b_height,
                     x=start_width + (b_width + 10) * (count % 3), y=start_height + b_height * (count // 3))
 
