@@ -28,7 +28,7 @@ class Window:
         self.stats_b.place(width=150, height=50, x=self.WIDTH-175, y=10)
 
         self.state_label = tk.Label(master=self.main, text="", font=("Helvetica",14))
-        self.state_label.place(x=80, y=70)
+        self.state_label.place(x=70, y=70)
 
     def order(self, i, event):
         """Sends order number i to server."""
@@ -38,7 +38,16 @@ class Window:
 
         button["bg"] = "#ff7518"         # mark pressed button
 
-        order_n(i)
+        try:
+            order_n(i)
+        except ConnectionRefusedError:
+            self.state_label["text"] = "Connection error. Sorry, try again later."
+            for b in self.bev_buttons:
+                b.destroy()
+            self.bev_buttons.clear()
+    
+            return
+            
         for b in self.bev_buttons:
             b["state"] = "disabled"
         
@@ -48,8 +57,16 @@ class Window:
         """Gets dictionary of available beverages, then creates and places a button for each."""
 
         import math
+        
+        try:
+            bevs = get_dict_of_available_beverages()
+        except ConnectionRefusedError:
+            self.state_label["text"] = "Connection error. Sorry, try again later."  
+            for b in self.bev_buttons:
+                b.destroy()
+            self.bev_buttons.clear()
+            return
 
-        bevs = get_dict_of_available_beverages()
         self.bev_buttons.clear()
         self.state_label["text"] = ""
 
@@ -72,7 +89,11 @@ class Window:
             self.bev_buttons.append(b)
         
     def stats(self):
-        statistics = get_stats()
+        try:
+            statistics = get_stats()
+        except ConnectionRefusedError:
+            statistics = "Connection error. Sorry, try again later."
+            
         tk.messagebox.showinfo("Statistics", statistics)
     
     
