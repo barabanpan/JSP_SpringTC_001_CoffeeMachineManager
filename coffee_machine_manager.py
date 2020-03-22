@@ -67,9 +67,11 @@ class Window:
             self.bev_buttons.clear()
             return
 
+        for b in self.bev_buttons:
+                b.destroy()
         self.bev_buttons.clear()
-        self.state_label["text"] = ""
 
+        self.state_label["text"] = ""
 
         b_width  = (self.WIDTH - 40) / 3
         b_height = (self.HEIGHT - 100) / math.ceil(len(bevs) / 3)
